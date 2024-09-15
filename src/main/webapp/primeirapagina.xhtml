@@ -12,22 +12,25 @@
 	<h:form id="formUser">
 		<h1>Bem Vindo!</h1>
 		
-		<!--  -->
-		Nome:
-		<h:inputText id="campoNome" value="#{pessoaBean.nome}"/><br/>
+		<h:outputLabel value="Id:"/>
+		<h:inputText value="#{pessoaBean.pessoa.id}" readonly="true"/>
 		
-		Senha:
-		<h:inputSecret id="senha" value="#{pessoaBean.senha}"/><br/>
-		<h:inputTextarea id="texto" value="#{pessoaBean.texto}"/><br/>
-		 
-		<h:commandButton binding="#{pessoaBean.commandButton}" value="Adicionar Nome" action="#{pessoaBean.addNome}"/>
+		<br/>
+		<h:outputLabel value="Nome:"/>
+		<h:inputText value="#{pessoaBean.pessoa.nome}"/>
 		
-		<h:dataTable value="#{pessoaBean.nomes}" var="nome">
-			<h:column>
-				<h:outputText value="#{nome}"/>
-			</h:column>
-		</h:dataTable>
+		<br/>
+		<h:outputLabel value="Sobrenome:"/>
+		<h:inputText value="#{pessoaBean.pessoa.sobrenome}"/>
 		
+		<br/>
+		<h:outputLabel value="Idade:"/>
+		<h:inputText value="#{pessoaBean.pessoa.idade}"/>
+		
+		<br/>
+		<h:commandButton value="Novo" action="#{pessoaBean.novo}"/>
+		<h:commandButton value="salvar" action="#{pessoaBean.salvar}"/>
+		<h:commandButton value="Delete" action="#{pessoaBean.delete}"/>
 	</h:form>
 	
 </h:body>
