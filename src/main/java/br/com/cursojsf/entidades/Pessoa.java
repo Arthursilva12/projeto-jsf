@@ -24,7 +24,7 @@ public class Pessoa implements Serializable{
 	
 	@Temporal(TemporalType.DATE)
 	private java.util.Date dataNascimento;
-
+	
 	
 	public Pessoa() {
 	}
@@ -84,6 +84,11 @@ public class Pessoa implements Serializable{
 			return false;
 		Pessoa other = (Pessoa) obj;
 		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "Pessoa [id=" + id + "]";
 	}
 	
 	
