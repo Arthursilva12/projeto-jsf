@@ -1,5 +1,7 @@
 package br.com.cursojsf.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
@@ -39,5 +41,15 @@ public class DaoGeneric<E> {
 		entityManager.createQuery(
 				"delete from " + entidade.getClass().getCanonicalName()+" where id = "+id).executeUpdate();
 		entityTransaction.commit();
+	}
+	
+	public List<E> getListEntity(Class<E> entidade) {
+		EntityTransaction entityTransaction = entityManager.getTransaction();
+		entityTransaction.begin();
+		
+		List<E> retorno = entityManager.createQuery("from "+entidade.getName()).getResultList();	
+		
+		entityTransaction.commit();
+		return retorno;
 	}
 }
