@@ -25,10 +25,39 @@ public class Pessoa implements Serializable{
 	@Temporal(TemporalType.DATE)
 	private java.util.Date dataNascimento;
 	
+	private String sexo;
 	
-	public Pessoa() {
+	private String[] frameworks;
+	
+	private Boolean ativo;
+	
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
 	}
 
+	public Boolean getAtivo() {
+		return ativo;
+	}
+	
+	public void setFrameworks(String[] frameworks) {
+		this.frameworks = frameworks;
+	}
+	
+	public String[] getFrameworks() {
+		return frameworks;
+	}
+	
+	public String getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+
+	public Pessoa() {
+	}
+	
 	public Long getId() {
 		return id;
 	}
