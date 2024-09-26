@@ -7,9 +7,13 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 
 import br.com.cursojsf.dao.DaoGeneric;
 import br.com.cursojsf.entidades.Pessoa;
+import br.com.cursojsf.repository.IDaoPessoa;
+import br.com.cursojsf.repository.IDaoPessoaImpl;
 
 @ViewScoped
 @ManagedBean(name = "pessoaBean")
@@ -19,6 +23,8 @@ public class PessoaBean implements Serializable {
 	private Pessoa pessoa = new Pessoa();
 	private DaoGeneric<Pessoa> daoGeneric = new DaoGeneric<Pessoa>();
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
+	
+	private IDaoPessoa iDaoPessoa = new IDaoPessoaImpl();
 	
 	public String salvar() {
 		pessoa = daoGeneric.merge(pessoa);
@@ -36,6 +42,30 @@ public class PessoaBean implements Serializable {
 		pessoa = new Pessoa();
 		carregarPessoas();
 		return "";
+	}
+	
+	public String logar() {
+
+		Pessoa pessoaUser = iDaoPessoa.consultarUsuario(pessoa.getLogin(), pessoa.getSenha());
+		
+		if(pessoaUser != null) {//Achou o usuário
+			//adicionar o usuário na sessão usuarioLogado
+			FacesContext context = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = context.getExternalContext();
+			externalContext.getSessionMap().put("usuarioLogado", pessoaUser);
+			
+			return "primeirapagina.jsf";
+		}
+		
+		return "index.jsf";
+	}
+	
+	public boolean permitirAcesso(String acesso) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		Pessoa pessoa = (Pessoa) externalContext.getSessionMap().get("usuarioLogado");
+		
+		return pessoa.getPerfilUser().equals(acesso);
 	}
 	
 	@PostConstruct
