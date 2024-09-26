@@ -8,6 +8,7 @@
 		
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>br.com.cursojsf.entidades.Pessoa</class>	
+		<class>br.com.cursojsf.entidades.Lancamento</class>	
 	
 		<properties><!-- Configuração de connexão com o banco. -->
 			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/projeto-jsf"/>
