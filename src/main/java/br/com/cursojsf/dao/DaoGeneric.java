@@ -2,9 +2,12 @@ package br.com.cursojsf.dao;
 
 import java.util.List;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import br.com.cursojsf.entidades.Pessoa;
 import br.com.cursojsf.jpautil.JPAUtil;
 
 public class DaoGeneric<E> {
@@ -51,5 +54,13 @@ public class DaoGeneric<E> {
 		
 		entityTransaction.commit();
 		return retorno;
+	}
+	
+	public Pessoa getUserLogado() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		Pessoa pessoaUser = (Pessoa) externalContext.getSessionMap().get("usuarioLogado");
+		
+		return pessoaUser;
 	}
 }

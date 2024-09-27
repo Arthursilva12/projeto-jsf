@@ -45,26 +45,21 @@ public class PessoaBean implements Serializable {
 	}
 	
 	public String logar() {
-
 		Pessoa pessoaUser = iDaoPessoa.consultarUsuario(pessoa.getLogin(), pessoa.getSenha());
 		
 		if(pessoaUser != null) {//Achou o usuário
-			//adicionar o usuário na sessão usuarioLogado
+			//adiciona o usuário na sessão usuarioLogado
 			FacesContext context = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = context.getExternalContext();
 			externalContext.getSessionMap().put("usuarioLogado", pessoaUser);
 			
 			return "primeirapagina.jsf";
 		}
-		
 		return "index.jsf";
 	}
 	
 	public boolean permitirAcesso(String acesso) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = context.getExternalContext();
-		Pessoa pessoa = (Pessoa) externalContext.getSessionMap().get("usuarioLogado");
-		
+		Pessoa pessoa = daoGeneric.getUserLogado();
 		return pessoa.getPerfilUser().equals(acesso);
 	}
 	
