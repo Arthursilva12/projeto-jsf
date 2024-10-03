@@ -1,6 +1,7 @@
 package br.com.cursojsf.entidades;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -23,7 +24,7 @@ public class Pessoa implements Serializable{
 	private Integer idade;
 	
 	@Temporal(TemporalType.DATE)
-	private java.util.Date dataNascimento;
+	private java.util.Date dataNascimento = new Date();
 	
 	private String sexo;
 	
