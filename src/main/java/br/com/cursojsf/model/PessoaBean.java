@@ -1,6 +1,11 @@
 package br.com.cursojsf.model;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +15,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+
+import com.google.gson.Gson;
 
 import br.com.cursojsf.dao.DaoGeneric;
 import br.com.cursojsf.entidades.Pessoa;
@@ -55,6 +63,49 @@ public class PessoaBean implements Serializable {
 		FacesContext context = FacesContext.getCurrentInstance();
 		FacesMessage message = new FacesMessage(msg);
 		context.addMessage(null, message);
+	}
+	
+	//Metod executado depois do campo cep perde o foco.
+	public void pesquisaCep(AjaxBehaviorEvent event) {
+		
+		try {
+			//Consumindo API viaCep
+			URL url = new URL("https://viacep.com.br/ws/"+pessoa.getCep()+"/json/");// monta a url
+			URLConnection connection = url.openConnection();// abre a connection
+			InputStream inputStream = connection.getInputStream();// faz consulta a retorna;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+			
+			String cep = "";
+			StringBuilder jsonCep = new StringBuilder();
+			
+			while ((cep = reader.readLine()) != null) {
+				jsonCep.append(cep);
+			}
+			
+			Pessoa gsonAux = new Gson().fromJson(jsonCep.toString(), Pessoa.class);
+			
+			pessoa.setCep(gsonAux.getCep());
+			pessoa.setLogradouro(gsonAux.getLogradouro());
+			pessoa.setComplemento(gsonAux.getComplemento());
+			pessoa.setUnidade(gsonAux.getUnidade());
+			pessoa.setBairro(gsonAux.getBairro());
+			pessoa.setLocalidade(gsonAux.getLocalidade());
+			pessoa.setUf(gsonAux.getUf());
+			pessoa.setEstado(gsonAux.getEstado());
+			pessoa.setRegiao(gsonAux.getRegiao());
+			pessoa.setIbge(gsonAux.getIbge());
+			pessoa.setGia(gsonAux.getGia());
+			pessoa.setDdd(gsonAux.getDdd());
+			pessoa.setSiafi(gsonAux.getSiafi());
+			
+			System.out.println(pessoa.toString()); 
+			System.out.println(jsonCep);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			mostrarMsg("Erro ao consultar o cep");
+		}
+		
 	}
 	
 	public String logar() {

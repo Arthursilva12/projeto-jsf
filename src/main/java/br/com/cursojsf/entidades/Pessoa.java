@@ -1,6 +1,7 @@
 package br.com.cursojsf.entidades;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -38,9 +39,149 @@ public class Pessoa implements Serializable{
 	private String perfilUser;
 	
 	private String nivelProgramador;
-
+	
 	private Integer[] linguagens; 
 	
+	private String cpf;
+	
+	private String tituloEleitor;
+	
+	private String cep;
+	private String logradouro;
+	private String complemento;
+	private String unidade;
+	private String bairro;
+	private String localidade;
+	private String uf;
+	private String estado;
+	private String regiao;
+	private String ibge;
+	private String gia;
+	private String ddd;
+	private String siafi;
+	
+	
+	
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public String getRegiao() {
+		return regiao;
+	}
+
+	public void setRegiao(String regiao) {
+		this.regiao = regiao;
+	}
+
+	public String getDdd() {
+		return ddd;
+	}
+
+	public void setDdd(String ddd) {
+		this.ddd = ddd;
+	}
+
+	public String getSiafi() {
+		return siafi;
+	}
+
+	public void setSiafi(String siafi) {
+		this.siafi = siafi;
+	}
+
+	public String getUnidade() {
+		return unidade;
+	}
+
+	public void setUnidade(String unidade) {
+		this.unidade = unidade;
+	}
+
+	public String getLogradouro() {
+		return logradouro;
+	}
+
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
+	}
+
+	public String getComplemento() {
+		return complemento;
+	}
+
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getLocalidade() {
+		return localidade;
+	}
+
+	public void setLocalidade(String localidade) {
+		this.localidade = localidade;
+	}
+
+	public String getUf() {
+		return uf;
+	}
+
+	public void setUf(String uf) {
+		this.uf = uf;
+	}
+
+	public String getIbge() {
+		return ibge;
+	}
+
+	public void setIbge(String ibge) {
+		this.ibge = ibge;
+	}
+
+	public String getGia() {
+		return gia;
+	}
+
+	public void setGia(String gia) {
+		this.gia = gia;
+	}
+
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getTituloEleitor() {
+		return tituloEleitor;
+	}
+
+	public void setTituloEleitor(String tituloEleitor) {
+		this.tituloEleitor = tituloEleitor;
+	}
+
 	public Integer[] getLinguagens() {
 		return linguagens;
 	}
@@ -167,7 +308,14 @@ public class Pessoa implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Pessoa [id=" + id + "]";
+		return "Pessoa [id=" + id + ", Nome=" + Nome + ", sobrenome=" + sobrenome + ", idade=" + idade
+				+ ", dataNascimento=" + dataNascimento + ", sexo=" + sexo + ", frameworks="
+				+ Arrays.toString(frameworks) + ", ativo=" + ativo + ", login=" + login + ", senha=" + senha
+				+ ", perfilUser=" + perfilUser + ", nivelProgramador=" + nivelProgramador + ", linguagens="
+				+ Arrays.toString(linguagens) + ", cpf=" + cpf + ", tituloEleitor=" + tituloEleitor + ", cep=" + cep
+				+ ", logradouro=" + logradouro + ", complemento=" + complemento + ", unidade=" + unidade + ", bairro="
+				+ bairro + ", localidade=" + localidade + ", uf=" + uf + ", estado=" + estado + ", regiao=" + regiao
+				+ ", ibge=" + ibge + ", gia=" + gia + ", ddd=" + ddd + ", siafi=" + siafi + "]";
 	}
 	
 	

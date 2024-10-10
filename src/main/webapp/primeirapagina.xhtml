@@ -34,6 +34,12 @@
 				
 			<h:outputLabel value="Idade:"/>
 			<h:inputText value="#{pessoaBean.pessoa.idade}"/>
+			
+			<h:outputLabel value="CPF:"/>
+			<h:inputText value="#{pessoaBean.pessoa.cpf}"/>
+
+			<h:outputLabel value="Título Eleit.:"/>
+			<h:inputText value="#{pessoaBean.pessoa.tituloEleitor}"/>
 		
 			<h:outputLabel value="Login"/>
 			<h:inputText value="#{pessoaBean.pessoa.login}"/>
@@ -70,6 +76,63 @@
 				<f:selectItem itemValue="JSF"/>
 			</h:selectManyMenu>	
 				
+			<h:outputLabel value="CEP:"/>
+			<h:inputText value="#{pessoaBean.pessoa.cep}">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}" 
+					render="logradouro complemento unidade bairro localidade uf estado regiao ibge gia ddd siafi"/>
+			</h:inputText>	
+			<h:outputLabel value="Logradouro:"/>
+			<h:inputText value="#{pessoaBean.pessoa.logradouro}" id="logradouro">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Complemento:"/>
+			<h:inputText value="#{pessoaBean.pessoa.complemento}" id="complemento">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Unidade:"/>
+			<h:inputText value="#{pessoaBean.pessoa.unidade}" id="unidade">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Bairro:"/>
+			<h:inputText value="#{pessoaBean.pessoa.bairro}" id="bairro">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Localidade:"/>
+			<h:inputText value="#{pessoaBean.pessoa.localidade}" id="localidade">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Uf:"/>
+			<h:inputText value="#{pessoaBean.pessoa.uf}" id="uf">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Estado:"/>
+			<h:inputText value="#{pessoaBean.pessoa.estado}" id="estado">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Região:"/>
+			<h:inputText value="#{pessoaBean.pessoa.regiao}" id="regiao">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Ibge:"/>
+			<h:inputText value="#{pessoaBean.pessoa.ibge}" id="ibge">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Gia:"/>
+			<h:inputText value="#{pessoaBean.pessoa.gia}" id="gia">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="DDD:"/>
+			<h:inputText value="#{pessoaBean.pessoa.ddd}" id="ddd">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+			<h:outputLabel value="Siafi:"/>
+			<h:inputText value="#{pessoaBean.pessoa.siafi}" id="siafi">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/>
+			</h:inputText>	
+				
+			<h:outputLabel value="Ativo"/>
+			<h:selectBooleanCheckbox value="#{pessoaBean.pessoa.ativo}"/>	
+				
 			<h:outputLabel value="Programador:"/>
 			<h:selectOneRadio value="#{pessoaBean.pessoa.nivelProgramador}" layout="lineDirection">
 				<f:selectItem itemValue="J" itemLabel="Junior"/>
@@ -87,17 +150,14 @@
 				<f:selectItem itemValue="5" itemLabel="Cobol"/>
 			</h:selectManyCheckbox>
 						
-			<h:outputLabel value="Ativo"/>
-			<h:selectBooleanCheckbox value="#{pessoaBean.pessoa.ativo}"/>
-				
 			<h:outputLabel/>
 			<h:panelGroup>
-				<h:commandButton value="salvar" action="#{pessoaBean.salvar}" image="/resources/img/salvar.png" title="Salvar"/>
-				<h:commandButton value="Delete" action="#{pessoaBean.delete}" image="/resources/img/botao-apagar.png" title="Delete" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}"/>
-				<h:commandButton value="Novo" id="botaoNovo" action="#{pessoaBean.novo}" image="/resources/img/novo-usuario.png" title="Novo">
+				<h:commandButton value="Novo" id="botaoNovo" action="#{pessoaBean.novo}" image="/resources/img/novo-usuario.png" title="Novo" style="margin-left:1cm;">
 					<f:ajax execute="botaoNovo" render="@form"/>
 				</h:commandButton>
-				<h:commandButton value="Limpar" id="botaoLimpar" action="#{pessoaBean.limpar}" image="/resources/img/reiniciar.png" title="Limpar">
+				<h:commandButton value="salvar" action="#{pessoaBean.salvar}" image="/resources/img/salvar.png" title="Salvar" style="margin-left:1cm;"/>
+				<h:commandButton value="Delete" action="#{pessoaBean.delete}" image="/resources/img/botao-apagar.png" title="Delete" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}" style="margin-left:1cm;"/>
+				<h:commandButton value="Limpar" id="botaoLimpar" action="#{pessoaBean.limpar}" image="/resources/img/reiniciar.png" title="Limpar" style="margin-left:1cm;">
 					<f:ajax execute="botaoLimpar" render="@form"/>
 				</h:commandButton>
 			</h:panelGroup>
