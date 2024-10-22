@@ -1,17 +1,32 @@
 package br.com.cursojsf.model;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.html.HtmlSelectOneMenu;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
+
+import com.google.gson.Gson;
 
 import br.com.cursojsf.dao.DaoGeneric;
+import br.com.cursojsf.entidades.Cidades;
+import br.com.cursojsf.entidades.Estados;
 import br.com.cursojsf.entidades.Pessoa;
+import br.com.cursojsf.jpautil.JPAUtil;
 import br.com.cursojsf.repository.IDaoPessoa;
 import br.com.cursojsf.repository.IDaoPessoaImpl;
 
@@ -26,13 +41,40 @@ public class PessoaBean implements Serializable {
 	
 	private IDaoPessoa iDaoPessoa = new IDaoPessoaImpl();
 	
+	private List<SelectItem> estados;
+	
+	private List<SelectItem> cidades;
+	
 	public String salvar() {
 		pessoa = daoGeneric.merge(pessoa);
 		carregarPessoas();
+		mostrarMsg("Cadastrado com sucesso!");
 		return "";
 	}
 	
+	public void editar() {
+		if(pessoa != null) {
+			Estados estado = pessoa.getCidades().getEstados();
+			pessoa.setEstados(estado);
+			
+			List<Cidades> cidades = JPAUtil.getEntityManager()
+					.createQuery("from Cidades where estados.id = "+ estado.getId()).getResultList();
+				
+			List<SelectItem> selectItemsCidades = new ArrayList<SelectItem>();
+				
+			for (Cidades cidade : cidades) {
+				selectItemsCidades.add(new SelectItem(cidade, cidade.getNome()));
+			}
+				
+			setCidades(selectItemsCidades);
+		}
+	}
+	
 	public String novo() {
+		pessoa = new Pessoa();
+		return "";
+	}
+	public String limpar() {
 		pessoa = new Pessoa();
 		return "";
 	}
@@ -41,38 +83,133 @@ public class PessoaBean implements Serializable {
 		daoGeneric.deletePorId(pessoa);
 		pessoa = new Pessoa();
 		carregarPessoas();
+		mostrarMsg("Removido com sucesso!");
 		return "";
 	}
 	
+	
+	private void mostrarMsg(String msg) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		FacesMessage message = new FacesMessage(msg);
+		context.addMessage(null, message);
+	}
+	
+	//Metod executado depois do campo cep perde o foco.
+	public void pesquisaCep(AjaxBehaviorEvent event) {
+		
+		try {
+			//Consumindo API viaCep
+			URL url = new URL("https://viacep.com.br/ws/"+pessoa.getCep()+"/json/");// monta a url
+			URLConnection connection = url.openConnection();// abre a connection
+			InputStream inputStream = connection.getInputStream();// faz consulta a retorna;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+			
+			String cep = "";
+			StringBuilder jsonCep = new StringBuilder();
+			
+			while ((cep = reader.readLine()) != null) {
+				jsonCep.append(cep);
+			}
+			
+			Pessoa gsonAux = new Gson().fromJson(jsonCep.toString(), Pessoa.class);
+			
+			pessoa.setCep(gsonAux.getCep());
+			pessoa.setLogradouro(gsonAux.getLogradouro());
+			pessoa.setComplemento(gsonAux.getComplemento());
+			pessoa.setUnidade(gsonAux.getUnidade());
+			pessoa.setBairro(gsonAux.getBairro());
+			pessoa.setLocalidade(gsonAux.getLocalidade());
+			pessoa.setUf(gsonAux.getUf());
+//			pessoa.setEstado(gsonAux.getEstado());
+			pessoa.setRegiao(gsonAux.getRegiao());
+			pessoa.setIbge(gsonAux.getIbge());
+			pessoa.setGia(gsonAux.getGia());
+			pessoa.setDdd(gsonAux.getDdd());
+			pessoa.setSiafi(gsonAux.getSiafi());
+			
+			System.out.println(pessoa.toString()); 
+			System.out.println(jsonCep);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			mostrarMsg("Erro ao consultar o cep");
+		}
+		
+	}
+	
+	
+	public String deslogar() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		externalContext.getSessionMap().remove("usuarioLogado");
+		
+		HttpServletRequest httpServletRequest = (HttpServletRequest) 
+				context.getCurrentInstance().getExternalContext().getContext();
+		
+		httpServletRequest.getSession().invalidate();
+		
+		return "index.jsf";
+	}
+	
+	
 	public String logar() {
-
 		Pessoa pessoaUser = iDaoPessoa.consultarUsuario(pessoa.getLogin(), pessoa.getSenha());
 		
 		if(pessoaUser != null) {//Achou o usuário
-			//adicionar o usuário na sessão usuarioLogado
+			//adiciona o usuário na sessão usuarioLogado
 			FacesContext context = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = context.getExternalContext();
 			externalContext.getSessionMap().put("usuarioLogado", pessoaUser);
 			
 			return "primeirapagina.jsf";
 		}
-		
 		return "index.jsf";
 	}
 	
 	public boolean permitirAcesso(String acesso) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = context.getExternalContext();
-		Pessoa pessoa = (Pessoa) externalContext.getSessionMap().get("usuarioLogado");
-		
+		Pessoa pessoa = daoGeneric.getUserLogado();
 		return pessoa.getPerfilUser().equals(acesso);
 	}
+	
+	public List<SelectItem> getEstados(){
+		estados = iDaoPessoa.listaEstados();
+		return estados;
+	}
+	
+	public void carregaCidades(AjaxBehaviorEvent event) {
+		Estados estado = (Estados) ((HtmlSelectOneMenu)event.getSource()).getValue();
+		
+		if(estado != null) {
+			pessoa.setEstados(estado);
+				
+			List<Cidades> cidades = JPAUtil.getEntityManager()
+					.createQuery("from Cidades where estados.id = "+ estado.getId()).getResultList();
+				
+			List<SelectItem> selectItemsCidades = new ArrayList<SelectItem>();
+				
+			for (Cidades cidade : cidades) {
+				selectItemsCidades.add(new SelectItem(cidade, cidade.getNome()));
+			}
+				
+			setCidades(selectItemsCidades);
+		}
+	}
+			
 	
 	@PostConstruct
 	public void carregarPessoas() {
 		pessoas = daoGeneric.getListEntity(Pessoa.class);
 	}
 	
+	
+	public List<SelectItem> getCidades() {
+		return cidades;
+	}
+
+	public void setCidades(List<SelectItem> cidades) {
+		this.cidades = cidades;
+	}
+
 	public List<Pessoa> getPessoas() {
 		return pessoas;
 	}
