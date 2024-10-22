@@ -1,7 +1,6 @@
 package br.com.cursojsf.entidades;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -9,8 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 public class Pessoa implements Serializable{
@@ -60,8 +61,28 @@ public class Pessoa implements Serializable{
 	private String ddd;
 	private String siafi;
 	
+	@Transient//Não fica persistente ou não grava no banco
+	private Estados estados;
 	
+	@ManyToOne
+	private Cidades cidades;
 	
+	public Cidades getCidades() {
+		return cidades;
+	}
+
+	public void setCidades(Cidades cidades) {
+		this.cidades = cidades;
+	}
+
+	public Estados getEstados() {
+		return estados;
+	}
+
+	public void setEstados(Estados estados) {
+		this.estados = estados;
+	}
+
 	public String getEstado() {
 		return estado;
 	}
@@ -306,18 +327,6 @@ public class Pessoa implements Serializable{
 		return Objects.equals(id, other.id);
 	}
 
-	@Override
-	public String toString() {
-		return "Pessoa [id=" + id + ", Nome=" + Nome + ", sobrenome=" + sobrenome + ", idade=" + idade
-				+ ", dataNascimento=" + dataNascimento + ", sexo=" + sexo + ", frameworks="
-				+ Arrays.toString(frameworks) + ", ativo=" + ativo + ", login=" + login + ", senha=" + senha
-				+ ", perfilUser=" + perfilUser + ", nivelProgramador=" + nivelProgramador + ", linguagens="
-				+ Arrays.toString(linguagens) + ", cpf=" + cpf + ", tituloEleitor=" + tituloEleitor + ", cep=" + cep
-				+ ", logradouro=" + logradouro + ", complemento=" + complemento + ", unidade=" + unidade + ", bairro="
-				+ bairro + ", localidade=" + localidade + ", uf=" + uf + ", estado=" + estado + ", regiao=" + regiao
-				+ ", ibge=" + ibge + ", gia=" + gia + ", ddd=" + ddd + ", siafi=" + siafi + "]";
-	}
-	
 	
 	
 }

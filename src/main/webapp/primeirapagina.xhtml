@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	  xmlns:h="http://xmlns.jcp.org/jsf/html"
 	  xmlns:f="http://java.sun.com/jsf/core"
-	  xmlns:ui = "http://java.sun.com/jsf/facelets">
+	  xmlns:ui = "http://java.sun.com/jsf/facelets"
+	  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <h:head>
 	<title>Cadastro de usuário</title>
@@ -24,19 +25,19 @@
 				
 			<h:outputLabel value="Nome:"/>
 			<h:inputText value="#{pessoaBean.pessoa.nome}" 
-				required="true" requiredMessage="Informe nome do usuário" 
+				required="true" requiredMessage="Informe nome do usuário" pt:placeholder="Informe o nome"
 				validatorMessage="Nome tem que ter no minímo 4 letras">
 				<f:validateLength minimum="4" maximum="50"/>
 			</h:inputText>
 	
-			<h:outputLabel value="Sobrenome:"/>
-			<h:inputText value="#{pessoaBean.pessoa.sobrenome}"/>
+			<h:outputLabel value="Sobrenome:"/> 
+			<h:inputText value="#{pessoaBean.pessoa.sobrenome}" pt:placeholder="Informe o sobrenome"/>
 				
 			<h:outputLabel value="Idade:"/>
 			<h:inputText value="#{pessoaBean.pessoa.idade}"/>
 			
 			<h:outputLabel value="CPF:"/>
-			<h:inputText value="#{pessoaBean.pessoa.cpf}"/>
+			<h:inputText value="#{pessoaBean.pessoa.cpf}" pt:placeholder="Informe um CPF válido"/>
 
 			<h:outputLabel value="Título Eleit.:"/>
 			<h:inputText value="#{pessoaBean.pessoa.tituloEleitor}"/>
@@ -77,7 +78,7 @@
 			</h:selectManyMenu>	
 				
 			<h:outputLabel value="CEP:"/>
-			<h:inputText value="#{pessoaBean.pessoa.cep}">
+			<h:inputText value="#{pessoaBean.pessoa.cep}" pt:placeholder="Informe um CEP válido">
 				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}" 
 					render="logradouro complemento unidade bairro localidade uf estado regiao ibge gia ddd siafi"/>
 			</h:inputText>	
@@ -149,6 +150,19 @@
 				<f:selectItem itemValue="4" itemLabel="C#"/>
 				<f:selectItem itemValue="5" itemLabel="Cobol"/>
 			</h:selectManyCheckbox>
+			
+			<h:outputLabel value="Estados:"/>
+			<h:selectOneMenu value="#{pessoaBean.pessoa.estados}" id="comboEstados" immediate="true" converter="estadoConverter">
+				<f:selectItem itemLabel="[-selecione-]" noSelectionOption="true"/>
+				<f:selectItems value="#{pessoaBean.estados}"/>
+				<f:ajax event="change" execute="@this" listener="#{pessoaBean.carregaCidades}" render="comboCidade"/>
+			</h:selectOneMenu>
+						
+			<h:outputLabel value="Cidades:"/>			
+			<h:selectOneMenu value="#{pessoaBean.pessoa.cidades}" id="comboCidade" immediate="true" converter="cidadeConverter">
+				<f:selectItem noSelectionOption="true" itemLabel="[-selecione-]"/>
+				<f:selectItems value="#{pessoaBean.cidades}" />
+			</h:selectOneMenu>			
 						
 			<h:outputLabel/>
 			<h:panelGroup>
@@ -200,7 +214,7 @@
 			
 			<h:column>
 				<f:facet name="header">Editar</f:facet>
-				<h:commandLink title="Editar">
+				<h:commandLink title="Editar" action="#{pessoaBean.editar}">
 					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}"/>
 					<h:graphicImage value="/resources/img/caneta.png"/>
 				</h:commandLink>
