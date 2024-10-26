@@ -1,6 +1,11 @@
 package br.com.cursojsf.model;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -18,7 +23,10 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
 
@@ -45,7 +53,39 @@ public class PessoaBean implements Serializable {
 	
 	private List<SelectItem> cidades;
 	
-	public String salvar() {
+	private Part arquivofoto;
+	
+	public String salvar() throws IOException {
+		// processar a imagem
+		byte[] imagemByte = getByte(arquivofoto.getInputStream());
+		pessoa.setFotoIconBase64original(imagemByte);// salva foto original
+		
+		// tranformar em bufferimagem
+		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagemByte));
+		
+		// Pega o tipo da imgem
+		int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+		
+		int largura = 200;
+		int altura = 200;
+		
+		// criar a miniatura
+		BufferedImage resizedImg = new BufferedImage(largura, altura, type);
+		Graphics2D graphics2d = resizedImg.createGraphics();
+		graphics2d.drawImage(bufferedImage, 0, 0, largura, altura, null);
+		graphics2d.dispose();
+		
+		// escrever novamente a imagem em tamnho menor
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		String extensao = arquivofoto.getContentType().split("\\/")[1];// imagem/png
+		ImageIO.write(resizedImg, extensao, baos);
+		// micro imagem
+		String miniImagem = "data:" + arquivofoto.getContentType()+";base64," 
+							+ DatatypeConverter.printBase64Binary(baos.toByteArray());
+		// processar a imagem
+		pessoa.setFotoIconBase64(miniImagem);
+		pessoa.setExtensao(extensao);
+		
 		pessoa = daoGeneric.merge(pessoa);
 		carregarPessoas();
 		mostrarMsg("Cadastrado com sucesso!");
@@ -194,7 +234,7 @@ public class PessoaBean implements Serializable {
 			setCidades(selectItemsCidades);
 		}
 	}
-			
+	
 	
 	@PostConstruct
 	public void carregarPessoas() {
@@ -230,6 +270,36 @@ public class PessoaBean implements Serializable {
 		this.daoGeneric = daoGeneric;
 	}
 
+	public void setArquivofoto(Part arquivofoto) {
+		this.arquivofoto = arquivofoto;
+	}
 	
+	public Part getArquivofoto() {
+		return arquivofoto;
+	}
+	// Metodo que coverte inputstream(entrada de dados) para um array de byte
+	// isso porque as classes do projeto não aceita diretamente um inputstream
+	private byte[] getByte(InputStream is) throws IOException {
+		int len;
+		int size = 1024;
+		byte[] buf  = null;
+		
+		if(is instanceof ByteArrayInputStream){
+			size = is.available();
+			buf =  new byte[size];
+			len = is.read(buf, 0, size);
+		}else {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			buf = new byte[size];
+			
+			while((len = is.read(buf, 0, size)) != -1) {
+				bos.write(buf, 0, len);
+			}
+			 
+			buf = bos.toByteArray();
+		}
+		
+		return buf;
+	}
 	
 }
