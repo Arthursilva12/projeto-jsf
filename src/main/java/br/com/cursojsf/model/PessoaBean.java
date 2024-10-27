@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -25,6 +26,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.xml.bind.DatatypeConverter;
 
@@ -60,7 +62,7 @@ public class PessoaBean implements Serializable {
 		byte[] imagemByte = getByte(arquivofoto.getInputStream());
 		pessoa.setFotoIconBase64original(imagemByte);// salva foto original
 		
-		// tranformar em bufferimagem
+		// tranformar em bufferimagem(tranforma em um tipo manipulavel)
 		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagemByte));
 		
 		// Pega o tipo da imgem
@@ -300,6 +302,25 @@ public class PessoaBean implements Serializable {
 		}
 		
 		return buf;
+	}
+	
+	
+	public void download() throws IOException {
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String fileDownloadId = params.get("fileDownloadId");
+		
+		Pessoa pessoa = daoGeneric.consultar(Pessoa.class, fileDownloadId);
+		
+		HttpServletResponse response = (HttpServletResponse) FacesContext
+				.getCurrentInstance().getExternalContext().getResponse();
+		
+		response.addHeader("Content-Disposition", "attachment; filename=download." + pessoa.getExtensao());
+		response.setContentType("application/octet-stream");
+		response.setContentLength(pessoa.getFotoIconBase64original().length);
+		response.getOutputStream().write(pessoa.getFotoIconBase64original());
+		response.getOutputStream().flush();
+		
+		FacesContext.getCurrentInstance().responseComplete();
 	}
 	
 }
