@@ -13,8 +13,9 @@
 <h:body>
 
 	<ui:include src="/menu.xhtml"/>
-
+	<fieldset>
 	<h:form id="formUser" enctype="multipart/form-data" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}" style="margin-left:36%;">
+	
 	
 		<h:panelGrid columns="2" rendered="true">
 			<f:facet name="header">
@@ -27,7 +28,7 @@
 			<h:inputFile id="foto" value="#{pessoaBean.arquivofoto}"></h:inputFile>
 				
 			<h:outputLabel value="Nome:"/>
-			<h:inputText value="#{pessoaBean.pessoa.nome}" 
+			<h:inputText value="#{pessoaBean.pessoa.nome}" valueChangeListener="#{pessoaBean.mudancaDeValor}"
 				required="true" requiredMessage="Informe nome do usuário" pt:placeholder="Informe o nome"
 				validatorMessage="Nome tem que ter no minímo 4 letras">
 				<f:validateLength minimum="4" maximum="50"/>
@@ -156,15 +157,15 @@
 			
 			<h:outputLabel value="Estados:"/>
 			<h:selectOneMenu value="#{pessoaBean.pessoa.estados}" id="comboEstados" immediate="true" converter="estadoConverter">
-				<f:selectItem itemLabel="[-selecione-]" noSelectionOption="true"/>
+				<f:selectItem itemLabel="[-selecione-]" noSelectionOption="true" itemValue="0"/>
 				<f:selectItems value="#{pessoaBean.estados}"/>
 				<f:ajax event="change" execute="@this" listener="#{pessoaBean.carregaCidades}" render="comboCidade"/>
 			</h:selectOneMenu>
 						
 			<h:outputLabel value="Cidades:"/>			
 			<h:selectOneMenu value="#{pessoaBean.pessoa.cidades}" id="comboCidade" immediate="true" converter="cidadeConverter">
-				<f:selectItem noSelectionOption="true" itemLabel="[-selecione-]"/>
-				<f:selectItems value="#{pessoaBean.cidades}" />
+				<f:selectItem noSelectionOption="true" itemLabel="[-selecione-]" itemValue="0"/>
+				<f:selectItems value="#{pessoaBean.cidades}" var="c" itemValue="#{c}" itemLabelEscaped=""/>
 			</h:selectOneMenu>			
 						
 			<h:outputLabel/>
@@ -172,14 +173,16 @@
 				<h:commandButton value="Novo" id="botaoNovo" action="#{pessoaBean.novo}" image="/resources/img/novo-usuario.png" title="Novo" style="margin-left:1cm;">
 					<f:ajax execute="botaoNovo" render="@form"/>
 				</h:commandButton>
-				<h:commandButton value="salvar" action="#{pessoaBean.salvar}" image="/resources/img/salvar.png" title="Salvar" style="margin-left:1cm;"/>
-				<h:commandButton value="Delete" action="#{pessoaBean.delete}" image="/resources/img/botao-apagar.png" title="Delete" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}" style="margin-left:1cm;"/>
+				<h:commandButton value="salvar" actionListener="#{pessoaBean.registraLog}" action="#{pessoaBean.salvar}" image="/resources/img/salvar.png" title="Salvar" style="margin-left:1cm;"/>
+				<h:commandButton value="Delete" action="#{pessoaBean.delete}" image="/resources/img/botao-apagar.png" title="Delete" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}" style="margin-left:1cm;" immediate="true"/>
 				<h:commandButton value="Limpar" id="botaoLimpar" action="#{pessoaBean.limpar}" image="/resources/img/reiniciar.png" title="Limpar" style="margin-left:1cm;">
 					<f:ajax execute="botaoLimpar" render="@form"/>
 				</h:commandButton>
 			</h:panelGroup>
 		</h:panelGrid>
-	</h:form>	
+	
+		
+	</h:form>
 	
 	<h:form id="formTable" style="margin-left:36%;">				
 		<h:messages infoStyle="color:blue;"/>
@@ -225,7 +228,7 @@
 			
 			<h:column>
 				<f:facet name="header">Editar</f:facet>
-				<h:commandLink title="Editar" action="#{pessoaBean.editar}">
+				<h:commandLink title="Editar" action="#{pessoaBean.editar}" immediate="true">
 					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}"/>
 					<h:graphicImage value="/resources/img/caneta.png"/>
 				</h:commandLink>
@@ -233,7 +236,7 @@
 			
 			<h:column rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}">
 				<f:facet name="header">Excluir</f:facet>
-				<h:commandLink title="Excluir" action="#{pessoaBean.delete}">
+				<h:commandLink title="Excluir" action="#{pessoaBean.delete}" immediate="true">
 					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}"/><!--passa o valor da tela para o objeto dentro do manageBean-->
 					<h:graphicImage value="/resources/img/bloquear.png"/>
 				</h:commandLink>
@@ -241,7 +244,7 @@
 			
 		</h:dataTable>
 	</h:form>
-	
+	</fieldset>
 	
 </h:body>
 </html>

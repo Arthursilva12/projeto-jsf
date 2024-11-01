@@ -16,6 +16,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.br.CPF;
+import org.hibernate.validator.constraints.br.TituloEleitoral;
 
 @Entity
 public class Pessoa implements Serializable{
@@ -25,8 +33,16 @@ public class Pessoa implements Serializable{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	@NotEmpty
+	@Size(min = 4, max = 50, message = "Nome tem que ter no minimo 4 caracteres")
 	private String Nome;
+	
+	@NotEmpty(message = "Sobrenome deve ser informado!")
+	@NotNull(message = "Sobrenome deve ser informado!")
 	private String sobrenome;
+	
+	@DecimalMax(value = "80", message = "Deve ser manor que 50 anos")
+	@DecimalMin(value = "10", message = "Deve ser maior que 10 anos")
 	private Integer idade;
 	
 	@Temporal(TemporalType.DATE)
@@ -47,8 +63,10 @@ public class Pessoa implements Serializable{
 	
 	private Integer[] linguagens; 
 	
+	@CPF(message = "CPF Inválido")
 	private String cpf;
 	
+	@TituloEleitoral(message = "Titulo eleitoral inválido!")
 	private String tituloEleitor;
 	
 	private String cep;
