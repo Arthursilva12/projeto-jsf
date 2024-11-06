@@ -23,6 +23,7 @@ import javax.faces.component.html.HtmlSelectOneMenu;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -57,41 +58,55 @@ public class PessoaBean implements Serializable {
 	
 	private Part arquivofoto;
 	
+	
+	public Pessoa convertImg() throws IOException {
+		if(getArquivofoto() != null) {
+			// processar a imagem
+			byte[] imagemByte = getByte(arquivofoto.getInputStream());
+			pessoa.setFotoIconBase64original(imagemByte);// salva foto original
+					
+			// tranformar em bufferimagem(tranforma em um tipo manipulavel)
+			BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagemByte));
+			
+			if(bufferedImage != null) {
+				// Pega o tipo da imgem
+				int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+						
+				int largura = 200;
+				int altura = 200;
+				// criar a miniatura
+				BufferedImage resizedImg = new BufferedImage(largura, altura, type);
+				Graphics2D graphics2d = resizedImg.createGraphics();
+				graphics2d.drawImage(bufferedImage, 0, 0, largura, altura, null);
+				graphics2d.dispose();
+						
+				// escrever novamente a imagem em tamnho menor
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				String extensao = arquivofoto.getContentType().split("\\/")[1];// imagem/png
+				ImageIO.write(resizedImg, extensao, baos);
+				// micro imagem
+				String miniImagem = "data:" + arquivofoto.getContentType()+";base64," 
+											+ DatatypeConverter.printBase64Binary(baos.toByteArray());
+				// processar a imagem
+				pessoa.setFotoIconBase64(miniImagem);
+				pessoa.setExtensao(extensao);
+			}
+		}
+		
+		return pessoa;
+	}
+	
+	
 	public String salvar() throws IOException {
-		// processar a imagem
-		byte[] imagemByte = getByte(arquivofoto.getInputStream());
-		pessoa.setFotoIconBase64original(imagemByte);// salva foto original
-		
-		// tranformar em bufferimagem(tranforma em um tipo manipulavel)
-		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagemByte));
-		
-		// Pega o tipo da imgem
-		int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
-		
-		int largura = 200;
-		int altura = 200;
-		
-		// criar a miniatura
-		BufferedImage resizedImg = new BufferedImage(largura, altura, type);
-		Graphics2D graphics2d = resizedImg.createGraphics();
-		graphics2d.drawImage(bufferedImage, 0, 0, largura, altura, null);
-		graphics2d.dispose();
-		
-		// escrever novamente a imagem em tamnho menor
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		String extensao = arquivofoto.getContentType().split("\\/")[1];// imagem/png
-		ImageIO.write(resizedImg, extensao, baos);
-		// micro imagem
-		String miniImagem = "data:" + arquivofoto.getContentType()+";base64," 
-							+ DatatypeConverter.printBase64Binary(baos.toByteArray());
-		// processar a imagem
-		pessoa.setFotoIconBase64(miniImagem);
-		pessoa.setExtensao(extensao);
-		
+		convertImg();
 		pessoa = daoGeneric.merge(pessoa);
 		carregarPessoas();
 		mostrarMsg("Cadastrado com sucesso!");
 		return "";
+	}
+	
+	public void registraLog() {
+		System.out.println("método registra log");
 	}
 	
 	public void editar() {
@@ -213,6 +228,7 @@ public class PessoaBean implements Serializable {
 		return pessoa.getPerfilUser().equals(acesso);
 	}
 	
+	
 	public List<SelectItem> getEstados(){
 		estados = iDaoPessoa.listaEstados();
 		return estados;
@@ -321,6 +337,12 @@ public class PessoaBean implements Serializable {
 		response.getOutputStream().flush();
 		
 		FacesContext.getCurrentInstance().responseComplete();
+	}
+	
+	
+	public void mudancaDeValor(ValueChangeEvent event) {
+		System.out.println("Valor antigo: "+event.getOldValue());
+		System.out.println("Valor Novo: "+event.getNewValue());
 	}
 	
 }
