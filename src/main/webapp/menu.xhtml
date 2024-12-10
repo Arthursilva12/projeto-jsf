@@ -2,14 +2,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	  xmlns:h="http://xmlns.jcp.org/jsf/html"
-	  xmlns:f="http://java.sun.com/jsf/core">
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:b="http://bootsfaces.net/ui">
 	  
 <h:body>
-
-	<h:form style="margin-left:34%;">
-		<h:commandLink value="Administração" action="primeirapagina" style="margin-left:1cm;" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}"/>
-		<h:commandLink value="Lançamentos" action="lancamento" style="margin-left:1cm;"/>
-		<h:commandLink value="Trocar Usuário" action="#{pessoaBean.deslogar}" style="margin-left:1cm;"/>
+	
+	<h:form>
+		<b:navBar brand="Menu" fluid="true">
+			<b:navbarLinks>
+				<b:navCommandLink action="primeirapagina" value="Administração" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}"/>
+				<b:navCommandLink action="lancamento" value="Lançamentos"/>
+				
+				<b:dropMenu value="Relatórios">
+					<b:navCommandLink value="Rel. Notas"/>
+					<b:navCommandLink value="Rel. Usuários"/>
+				</b:dropMenu>
+				
+				<b:navCommandLink action="primeirapagina" value="Trocar Usuário" style="margin-left:12cm;"/>
+			</b:navbarLinks>
+		</b:navBar>
 	</h:form>	
 	
 </h:body>

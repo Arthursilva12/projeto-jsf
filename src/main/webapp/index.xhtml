@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-	  xmlns:h="http://xmlns.jcp.org/jsf/html">
+	  xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:b="http://bootsfaces.net/ui">
 
 <h:head>
 	<title>Login</title>
@@ -10,20 +11,27 @@
 <h:body>
  	<!-- inputText é usado para gravar  
 		 outputText é usado para mostrar-->
-	<h:form id="formLogin" style="margin-top:19%; margin-left:40%;">
+	<b:messages auto-update="true" id="msg"/>
+	<b:form id="formLogin" style="margin-top:15%; margin-left:40%; margin-right:40%;">
 		<h1>Realize o login!</h1>
 		
-		<h:panelGrid columns="2">
-			<h:outputLabel value="Login"/>
-			<h:inputText value="#{pessoaBean.pessoa.login}"/>
-				
-			<h:outputLabel value="Senha"/>
-			<h:inputSecret value="#{pessoaBean.pessoa.senha}"/>
-			
-			<h:commandButton value="Logar" action="#{pessoaBean.logar}"/>
-		</h:panelGrid>
+		<b:panelGrid columns="1">
+			<b:column>
+				<h:outputLabel value="Login"/>
+				<b:inputText id="login" value="#{pessoaBean.pessoa.login}" required="true" requiredMessage="Informe o login"/>
+				<b:messages for="login" auto-update="true"/>
+			</b:column>
+			<b:column>	
+				<h:outputLabel value="Senha"/>
+				<b:inputSecret id="senha" value="#{pessoaBean.pessoa.senha}" required="true" requiredMessage="Informe a senha"/>
+				<b:messages for="senha" auto-update="true"/>
+			</b:column>
+			<b:column>
+				<b:commandButton look="success" value="Logar" action="#{pessoaBean.logar}" style="width:100%;"/>
+			</b:column>
+		</b:panelGrid>
 		
-	</h:form>
+	</b:form>
 	
 </h:body>
 </html>
