@@ -9,21 +9,20 @@
 
 <h:head>
 	<title>Cadastro de usuário</title>
+	<link href="resources/estilo.css" rel="stylesheet"></link>
 </h:head>
  
 <h:body>
-
+	<link href="resources/estilo.css" rel="stylesheet"></link>
 	<ui:include src="/menu.xhtml"/>
 	<fieldset>
 	
 	<b:messages id="msg"/>
 	<h:form id="formUser" enctype="multipart/form-data" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}" style="margin-left:1%; margin-right:1%;">
 		<h:panelGrid columns="2" rendered="true">
-			<b:panel>
 			<f:facet name="header">
 				<h:outputText value="Cadastro de Usuário"/>
 			</f:facet>
-			
 			<b:column>
 				<h:outputLabel value="Id:"/>
 				<b:inputText value="#{pessoaBean.pessoa.id}" readonly="true"/>
@@ -50,17 +49,17 @@
 			
 			<b:column>
 				<h:outputLabel value="Idade:"/>
-				<b:inputText value="#{pessoaBean.pessoa.idade}"/>
+				<b:inputText value="#{pessoaBean.pessoa.idade}" mask="numeric"/>
 			</b:column>
 			
 			<b:column>
 				<h:outputLabel value="CPF:"/>
-				<b:inputText value="#{pessoaBean.pessoa.cpf}" pt:placeholder="Informe um CPF válido"/>
+				<b:inputText value="#{pessoaBean.pessoa.cpf}" pt:placeholder="Informe um CPF válido" mask="999.999.999-99"/>
 			</b:column>
 			
 			<b:column>			
 				<h:outputLabel value="Título Eleit.:"/>
-				<b:inputText value="#{pessoaBean.pessoa.tituloEleitor}"/>
+				<b:inputText value="#{pessoaBean.pessoa.tituloEleitor}" mask="numeric"/>
 			</b:column>
 			
 			<b:column>
@@ -73,10 +72,8 @@
 			</b:column>	
 			
 			<b:column>
-				<h:outputLabel value="Nascimento:"/>
-				<b:inputText value="#{pessoaBean.pessoa.dataNascimento}" converterMessage="Data de nascimento errada">
-					<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" timeZone="GMT-03:00"/>
-				</b:inputText>	
+				<h:outputLabel value="Dat. Nascimento"/>
+				<b:datepicker locale="en" required="true" required-message="Informe a data de nascimento" value="#{pessoaBean.pessoa.dataNascimento}"/>
 			</b:column>
 			
 			<b:column>	
@@ -155,7 +152,7 @@
 			
 			<b:column>
 				<h:outputLabel value="CEP:"/>
-				<b:inputText value="#{pessoaBean.pessoa.cep}" pt:placeholder="Informe um CEP válido">
+				<b:inputText value="#{pessoaBean.pessoa.cep}" pt:placeholder="Informe um CEP válido" mask="99999-999">
 					<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}" 
 						render="logradouro complemento unidade bairro localidade uf estado regiao ibge gia ddd siafi"/>
 				</b:inputText>
@@ -241,11 +238,7 @@
 				</h:commandButton>
 				<h:commandButton value="salvar" actionListener="#{pessoaBean.registraLog}" action="#{pessoaBean.salvar}" image="/resources/img/salvar.png" title="Salvar" style="margin-left:0.5cm;"/>
 				<h:commandButton value="Delete" action="#{pessoaBean.delete}" image="/resources/img/botao-apagar.png" title="Delete" rendered="#{pessoaBean.permitirAcesso('ADMINISTRADOR')}" style="margin-left:0.5cm;" immediate="true"/>
-				<h:commandButton value="Limpar" id="botaoLimpar" action="#{pessoaBean.limpar}" image="/resources/img/reiniciar.png" title="Limpar" style="margin-left:0.5cm;">
-					<f:ajax execute="botaoLimpar" render="@form"/>
-				</h:commandButton>
 			</h:panelGroup>
-			</b:panel>
 		</h:panelGrid>
 		
 	</h:form>

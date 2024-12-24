@@ -8,16 +8,17 @@
 
 <h:head>
 	<title>Lançamentos</title>
+	<link href="resources/estilo.css" rel="stylesheet"></link>
 </h:head>
 
 <h:body>
+	<link href="resources/estilo.css" rel="stylesheet"></link>
 	<!-- inputText é usado para gravar  
 		 outputText é usado para mostrar-->
 	<ui:include src="/menu.xhtml"/>
 	<!--  -->
 	<b:messages id="msg"/>
 	<b:form id="formLancamento" style="margin-left:1%; margin-right:1%;">
-		<b:panel>
 		<b:panelGrid columns="2">
 			<f:facet name="header">
 				<h:outputText value="Lançamento" />
@@ -66,7 +67,6 @@
 				</h:panelGroup>
 			</b:column>
 		</b:panelGrid>
-		</b:panel>
 	</b:form>
 	
 	<b:form style="margin-left:3%; margin-right:3%;">
